@@ -93,23 +93,31 @@ document.addEventListener('DOMContentLoaded', () => {
     animatedElements.forEach(element => observer.observe(element));
 
     // Parallax effect for hero section
+    let ticking = false;
     window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const heroContent = document.querySelector('.hero-content');
-        const heroVisual = document.querySelector('.hero-visual');
-        const starsBackground = document.querySelector('.stars-background');
-        
-        if (heroContent) {
-            heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
-            heroContent.style.opacity = 1 - (scrolled / 600);
-        }
-        
-        if (heroVisual) {
-            heroVisual.style.transform = `translateY(${scrolled * 0.5}px)`;
-        }
-        
-        if (starsBackground) {
-            starsBackground.style.transform = `translateY(${scrolled * 0.1}px)`;
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrolled = window.pageYOffset;
+                const heroContent = document.querySelector('.hero-content');
+                const heroVisual = document.querySelector('.hero-visual');
+                const starsBackground = document.querySelector('.stars-background');
+                
+                if (heroContent) {
+                    heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    heroContent.style.opacity = 1 - (scrolled / 600);
+                }
+                
+                if (heroVisual) {
+                    heroVisual.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+                
+                if (starsBackground) {
+                    starsBackground.style.transform = `translateY(${scrolled * 0.1}px)`;
+                }
+                
+                ticking = false;
+            });
+            ticking = true;
         }
     });
 
@@ -267,7 +275,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Create particles periodically
-    setInterval(createParticle, 300);
+    const particleInterval = setInterval(createParticle, 300);
+    
+    // Cleanup particles when page is hidden
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            clearInterval(particleInterval);
+        }
+    });
 
     // Scroll progress indicator
     const scrollProgress = document.createElement('div');
@@ -332,8 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 
     // Initialize all animations
-    console.log('🚀 Seminator Web3 Landing Page Initialized');
-    console.log('✨ All animations and interactions are active');
+    // Logs removed for production
 });
 
 // Add smooth reveal animation for sections
